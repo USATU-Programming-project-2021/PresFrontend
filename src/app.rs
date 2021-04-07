@@ -39,20 +39,47 @@ impl TemplateApp {
         //    return SlideActionResult::Unchanged;
         //}
 
-        //if self.current_slide_index-1 < 0{
-        //    return SlideActionResult::Unchanged;
         //}
         match slide_action {
             SlideAction::Up => {
+                if self.current_slide_index+1 >= self.pres_data.pres.slides.len() as i64{
+                    return SlideActionResult::Unchanged;
+                }
                 self.current_slide_index += 1;
                 SlideActionResult::Changed(SlideAction::Up)
             }
             SlideAction::Down => {
+                if self.current_slide_index-1 < 0{
+                    return SlideActionResult::Unchanged;
+                }
                 self.current_slide_index -= 1;
                 SlideActionResult::Changed(SlideAction::Down)
             }
         }
     }
+
+    fn view_title(&self, title: &String, ui: &mut egui::Ui) {
+        ui.vertical_centered(|ui| {
+            ui.heading(title);
+        });
+    }
+
+
+    fn view_subtitle(&self, subtitle: &String, ui: &mut egui::Ui) {
+        ui.vertical_centered(|ui| {
+            ui.label(subtitle);
+        });
+    }
+
+    fn view_body(&self, body: &String, ui: &mut egui::Ui) {
+        ui.with_layout(egui::Layout::centered_and_justified(egui::Direction::TopDown), |ui|{
+            ui.small(body);
+        });
+
+        //ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui|{
+        //});
+    }
+
 
     fn view_slide(&mut self, ui: &mut egui::Ui) {
         let slide = &self
@@ -63,15 +90,23 @@ impl TemplateApp {
             .unwrap()
             .slide;
         let title = &slide.title;
+        let subtitle = &slide.subtitle;
+        let body = &slide.plain_text;
         match title {
-            Some(title) => {
-                ui.vertical_centered(|ui|{
-                    ui.heading(title);
-                })
-            },
-            None => unimplemented!(),
+            Some(title) => self.view_title(title, ui),
+            None => (),
         };
-        ui.style_mut().body_text_style = egui::TextStyle::Heading;
+
+        match subtitle {
+            Some(subtitle) => self.view_subtitle(subtitle, ui),
+            None => (),
+        };
+        
+        ui.separator();
+        match body {
+            Some(body) => self.view_body(body, ui),
+            None => (),
+        };
     }
 }
 
@@ -95,6 +130,15 @@ impl epi::App for TemplateApp {
         fonts.family_and_size.insert(
             egui::TextStyle::Heading,
             (egui::FontFamily::Proportional, 64.0),
+        );
+        fonts.family_and_size.insert(
+            egui::TextStyle::Body,
+            (egui::FontFamily::Proportional, 32.0),
+        );
+
+        fonts.family_and_size.insert(
+            egui::TextStyle::Small,
+            (egui::FontFamily::Proportional, 16.0),
         );
         ctx.set_fonts(fonts);
 

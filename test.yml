@@ -6,13 +6,13 @@ pres:
     - slide:
         title: Title about really interesting things lol
         subtitle: adssdas
-        plain_text: ./kek
+        plain_text: Lorem ipsum 1
     - slide:
         title: Title2
-        subtitle: kekekekek
-        plain_text: .///////
+        subtitle: KILL HER KILL HER KILL HER
+        plain_text: Lorem ipsum 2
     - slide:
         title: Title3
         subtitle: kekekekek
-        plain_text: .///////
+        plain_text: Lorem ipsum 3
 
