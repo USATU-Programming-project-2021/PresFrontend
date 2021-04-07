@@ -21,3 +21,16 @@ pub fn start(canvas_id: &str) -> Result<(), eframe::wasm_bindgen::JsValue> {
     let app = TemplateApp::default();
     eframe::start_web(canvas_id, Box::new(app))
 }
+
+pub mod analyzer{
+    pub mod generic_analyzer;
+    pub mod slide;
+    pub mod presentation;
+}
+
+
+pub mod validators{
+    pub mod slide;
+    pub mod presentation;
+    pub mod validator;
+}

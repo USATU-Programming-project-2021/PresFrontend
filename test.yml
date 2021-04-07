@@ -1,0 +1,18 @@
+
+pres:
+  theme: gruvbox
+
+  slides:
+    - slide:
+        title: Title about really interesting things lol
+        subtitle: adssdas
+        plain_text: ./kek
+    - slide:
+        title: Title2
+        subtitle: kekekekek
+        plain_text: .///////
+    - slide:
+        title: Title3
+        subtitle: kekekekek
+        plain_text: .///////
+
