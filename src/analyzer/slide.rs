@@ -1,7 +1,6 @@
 use super::generic_analyzer::YmlAnalyzer;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct SlideYml {
     pub slide: SlideYmlData,

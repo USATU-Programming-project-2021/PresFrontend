@@ -1,5 +1,5 @@
 #![forbid(unsafe_code)]
-#![cfg_attr(not(debug_assertions), deny(warnings))] // Forbid warnings in release builds
+// #![cfg_attr(not(debug_assertions), deny(warnings))] // Forbid warnings in release builds
 #![warn(clippy::all, rust_2018_idioms)]
 
 mod app;
@@ -22,15 +22,14 @@ pub fn start(canvas_id: &str) -> Result<(), eframe::wasm_bindgen::JsValue> {
     eframe::start_web(canvas_id, Box::new(app))
 }
 
-pub mod analyzer{
+pub mod analyzer {
     pub mod generic_analyzer;
-    pub mod slide;
     pub mod presentation;
+    pub mod slide;
 }
 
-
-pub mod validators{
-    pub mod slide;
+pub mod validators {
     pub mod presentation;
+    pub mod slide;
     pub mod validator;
 }

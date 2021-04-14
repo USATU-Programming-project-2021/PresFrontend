@@ -2,6 +2,7 @@ use crate::analyzer::generic_analyzer::YmlAnalyzer;
 use crate::analyzer::presentation::PresYml;
 use crate::analyzer::slide::SlideYml;
 use eframe::{egui, epi};
+use image::{io::Reader as ImageReader, GenericImageView};
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct TemplateApp {
@@ -42,14 +43,14 @@ impl TemplateApp {
         //}
         match slide_action {
             SlideAction::Up => {
-                if self.current_slide_index+1 >= self.pres_data.pres.slides.len() as i64{
+                if self.current_slide_index + 1 >= self.pres_data.pres.slides.len() as i64 {
                     return SlideActionResult::Unchanged;
                 }
                 self.current_slide_index += 1;
                 SlideActionResult::Changed(SlideAction::Up)
             }
             SlideAction::Down => {
-                if self.current_slide_index-1 < 0{
+                if self.current_slide_index - 1 < 0 {
                     return SlideActionResult::Unchanged;
                 }
                 self.current_slide_index -= 1;
@@ -64,7 +65,6 @@ impl TemplateApp {
         });
     }
 
-
     fn view_subtitle(&self, subtitle: &String, ui: &mut egui::Ui) {
         ui.vertical_centered(|ui| {
             ui.label(subtitle);
@@ -72,16 +72,36 @@ impl TemplateApp {
     }
 
     fn view_body(&self, body: &String, ui: &mut egui::Ui) {
-        ui.with_layout(egui::Layout::centered_and_justified(egui::Direction::TopDown), |ui|{
-            ui.small(body);
-        });
+        ui.with_layout(
+            egui::Layout::centered_and_justified(egui::Direction::TopDown),
+            |ui| {
+                ui.small(body);
+            },
+        );
 
         //ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui|{
         //});
     }
 
+    fn view_image(&self, image: &String, ui: &mut egui::Ui, frame: &mut epi::Frame<'_>) {
+        let img = ImageReader::open(image).unwrap().decode().unwrap();
+        let size = img.dimensions();
+        let img_buff = img.to_rgba8();
+        let pixels = img_buff.into_vec();
+        let pixels: Vec<egui::Color32> = pixels
+            .chunks(4)
+            .map(|p| egui::Color32::from_rgba_unmultiplied(p[0], p[1], p[2], p[3]))
+            .collect();
+        let talloc = frame.tex_allocator();
+        let tid =
+            talloc.alloc_srgba_premultiplied((size.0 as usize, size.1 as usize), pixels.as_slice());
+        ui.with_layout(
+            egui::Layout::centered_and_justified(egui::Direction::TopDown),
+            |ui| ui.image(tid, [size.0 as f32, size.1 as f32]),
+        );
+    }
 
-    fn view_slide(&mut self, ui: &mut egui::Ui) {
+    fn view_slide(&mut self, ui: &mut egui::Ui, frame: &mut epi::Frame<'_>) {
         let slide = &self
             .pres_data
             .pres
@@ -92,6 +112,7 @@ impl TemplateApp {
         let title = &slide.title;
         let subtitle = &slide.subtitle;
         let body = &slide.plain_text;
+        let images = &slide.images;
         match title {
             Some(title) => self.view_title(title, ui),
             None => (),
@@ -101,8 +122,12 @@ impl TemplateApp {
             Some(subtitle) => self.view_subtitle(subtitle, ui),
             None => (),
         };
-        
+
         ui.separator();
+        match images {
+            Some(imgs) => self.view_image(imgs.get(0).unwrap(), ui, frame),
+            None => (),
+        }
         match body {
             Some(body) => self.view_body(body, ui),
             None => (),
@@ -158,7 +183,11 @@ impl epi::App for TemplateApp {
                 SlideActionResult::Unchanged => println!("Unchanged"),
             };
         }
+        if ctx.input().key_released(egui::Key::Q) {
+            println!("Exit pres...");
+            frame.quit();
+        }
 
-        egui::CentralPanel::default().show(ctx, |ui| self.view_slide(ui));
+        egui::CentralPanel::default().show(ctx, |ui| self.view_slide(ui, frame));
     }
 }

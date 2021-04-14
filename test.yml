@@ -15,4 +15,13 @@ pres:
         title: Title3
         subtitle: kekekekek
         plain_text: Lorem ipsum 3
-
+    - slide:
+        title: Title4
+        subtitle: Image test
+        images:
+          - ./data/ava.jpg
+    - slide:
+        title: Title5
+        subtitle: Image test 2
+        images:
+          - ./data/cherry.ff
