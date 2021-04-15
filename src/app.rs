@@ -183,7 +183,7 @@ impl epi::App for TemplateApp {
                 SlideActionResult::Unchanged => println!("Unchanged"),
             };
         }
-        if ctx.input().key_released(egui::Key::Q) {
+        if ctx.input().key_released(egui::Key::Escape) {
             println!("Exit pres...");
             frame.quit();
         }
