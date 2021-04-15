@@ -5,12 +5,12 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::Read;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct PresYml {
     pub pres: PresYmlData,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct PresYmlData {
     pub theme: Option<String>,
     pub slides: Vec<SlideYml>,

@@ -5,7 +5,7 @@ use crate::validators;
 use eframe::{egui, epi};
 use image::{io::Reader as ImageReader, GenericImageView};
 
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize, std::default::Default)]
 pub struct TemplateApp {
     label: String,
     value: f32,

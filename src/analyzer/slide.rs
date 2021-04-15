@@ -1,12 +1,12 @@
 use super::generic_analyzer::YmlAnalyzer;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Default)]
 pub struct SlideYml {
     pub slide: SlideYmlData,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Default)]
 pub struct SlideYmlData {
     pub title: Option<String>,
     pub subtitle: Option<String>,
