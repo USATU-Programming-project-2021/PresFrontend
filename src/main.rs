@@ -2,10 +2,10 @@
 // #![cfg_attr(not(debug_assertions), deny(warnings))] // Forbid warnings in release builds
 #![warn(clippy::all, rust_2018_idioms)]
 
-use egui_template::analyzer::generic_analyzer::YmlAnalyzer;
-use egui_template::analyzer::presentation::PresYml;
-use egui_template::analyzer::slide::SlideYml;
-use egui_template::validators::slide;
+use presx::analyzer::generic_analyzer::YmlAnalyzer;
+use presx::analyzer::presentation::PresYml;
+use presx::analyzer::slide::SlideYml;
+use presx::validators::slide;
 use std::env;
 
 // When compiling natively:
@@ -15,7 +15,7 @@ fn main() {
     match PresYml::from_file(args.get(1).unwrap().to_string()) {
         Ok(pres) => {
             println!("{:?}", pres);
-            let app = egui_template::TemplateApp::new(pres);
+            let app = presx::TemplateApp::new(pres);
             eframe::run_native(Box::new(app));
         }
         Err(err) => println!("{}", err.to_string()),

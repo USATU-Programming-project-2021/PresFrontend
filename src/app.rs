@@ -1,12 +1,12 @@
 use crate::analyzer::generic_analyzer::YmlAnalyzer;
 use crate::analyzer::presentation::PresYml;
 use crate::analyzer::slide::SlideYml;
+use crate::validators;
 use eframe::{egui, epi};
 use image::{io::Reader as ImageReader, GenericImageView};
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct TemplateApp {
-    // Example stuff:
     label: String,
     value: f32,
     pres_data: Box<PresYml>,
@@ -36,11 +36,6 @@ enum SlideActionResult {
 
 impl TemplateApp {
     fn change_slide(&mut self, slide_action: SlideAction) -> SlideActionResult {
-        //if self.pres_data.pres.slides.len() as i64 == self.current_slide_index + 1{
-        //    return SlideActionResult::Unchanged;
-        //}
-
-        //}
         match slide_action {
             SlideAction::Up => {
                 if self.current_slide_index + 1 >= self.pres_data.pres.slides.len() as i64 {
@@ -59,31 +54,28 @@ impl TemplateApp {
         }
     }
 
-    fn view_title(&self, title: &String, ui: &mut egui::Ui) {
+    fn view_title(&self, title: &str, ui: &mut egui::Ui) {
         ui.vertical_centered(|ui| {
             ui.heading(title);
         });
     }
 
-    fn view_subtitle(&self, subtitle: &String, ui: &mut egui::Ui) {
+    fn view_subtitle(&self, subtitle: &str, ui: &mut egui::Ui) {
         ui.vertical_centered(|ui| {
             ui.label(subtitle);
         });
     }
 
-    fn view_body(&self, body: &String, ui: &mut egui::Ui) {
+    fn view_body(&self, body: &str, ui: &mut egui::Ui) {
         ui.with_layout(
             egui::Layout::centered_and_justified(egui::Direction::TopDown),
             |ui| {
                 ui.small(body);
             },
         );
-
-        //ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui|{
-        //});
     }
 
-    fn view_image(&self, image: &String, ui: &mut egui::Ui, frame: &mut epi::Frame<'_>) {
+    fn view_image(&self, image: &str, ui: &mut egui::Ui, frame: &mut epi::Frame<'_>) {
         let img = ImageReader::open(image).unwrap().decode().unwrap();
         let size = img.dimensions();
         let img_buff = img.to_rgba8();
@@ -124,9 +116,12 @@ impl TemplateApp {
         };
 
         ui.separator();
-        match images {
-            Some(imgs) => self.view_image(imgs.get(0).unwrap(), ui, frame),
-            None => (),
+        match validators::slide::validate_images(images) {
+            Ok(validators::validator::ValidateSucces::Success) => match images {
+                Some(imgs) => self.view_image(imgs.get(0).unwrap(), ui, frame),
+                None => (),
+            },
+            _ => (),
         }
         match body {
             Some(body) => self.view_body(body, ui),

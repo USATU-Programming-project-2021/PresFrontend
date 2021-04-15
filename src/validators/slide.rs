@@ -12,7 +12,7 @@ impl fmt::Display for SlideValidateError {
     }
 }
 
-fn validate_images(
+pub fn validate_images(
     slide_images: &Option<Vec<String>>,
 ) -> Result<ValidateSucces, SlideValidateError> {
     let images: &Vec<String> = match &slide_images {
